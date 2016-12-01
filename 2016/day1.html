@@ -7,16 +7,32 @@ canvas {
   margin: 1em;
   border: 1px solid blue;
 }
+.data {
+  font-size: 12pt;
+}
 #answer1 {
   color: red;
 }
 #answer2 {
   color: green;
 }
+.center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+
 </style>
 
 <body>
-<h1><a href="http://adventofcode.com/2016/day/1">Day 1</a></h1>
+<div><h2>
+  <a href="http://adventofcode.com/2016/day/1">Day 1</a>
+  <span class="data">(<a href="http://adventofcode.com/2016/day/1/input">Input Data</a>)</span>
+  </h2>
+</div>
 
 <div>
   How far is it to Easter Bunny Headquarters?  <span id="answer1"></span>
@@ -27,9 +43,9 @@ canvas {
   How far is it really to Easter Bunny Headquarters?  <span id="answer2"></span></p>
 </div>
 
-<div><a href="http://adventofcode.com/2016/day/1/input">Input Data</a></div>
-
-<canvas id="canvas" width="600" height="400"></canvas>
+<div class="center">
+  <canvas id="canvas" width="600" height="400"></canvas>
+</div>
 
 <hr>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
