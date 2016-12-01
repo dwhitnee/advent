@@ -43,7 +43,7 @@ function finish( gfx, pos ) {
   gfx.closePath();  // end old line
 
   gfx.beginPath();
-  gfx.setLineDash([1, 1]);  /*dashes are 5px and spaces are 3px*/
+  gfx.setLineDash([5, 3]);  /*dashes are 5px and spaces are 3px*/
   gfx.moveTo( 0, 0 );
   gfx.lineTo( pos.x, pos.y );
   gfx.stroke();
