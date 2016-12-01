@@ -2,13 +2,37 @@
 <html> <head>
 <title>Day 1</title>
 </head>
+<style>
+canvas {
+  margin: 1em;
+  border: 1px solid blue;
+}
+#answer1 {
+  color: red;
+}
+#answer2 {
+  color: green;
+}
+</style>
 
 <body>
 <h1><a href="http://adventofcode.com/2016/day/1">Day 1</a></h1>
-How far is it to Easter Bunny Headquarters?
+
+<div>
+  How far is it to Easter Bunny Headquarters?  <span id="answer1"></span>
+</div>
+<div>
+  How far is it really to Easter Bunny Headquarters?  <span id="answer2"></span>
+</div>
+
 <div><a href="http://adventofcode.com/2016/day/1/input">Input Data</a></div>
 
-<canvas id="canvas" width="600" height="600"></canvas>
+<canvas id="canvas" width="600" height="400"></canvas>
+
+<p>Easter Bunny HQ is actually at the first location you visit twice.</p>
+<p>How many blocks away is the first location you visit twice?</p>
+
+<canvas id="canvas2" width="600" height="400"></canvas>
 
 <hr>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>

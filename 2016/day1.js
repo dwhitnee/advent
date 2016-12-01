@@ -15,21 +15,26 @@ var start = { x:200, y:200 };
 function initGfx() {
   var c = document.getElementById("canvas");
   var gfx = c.getContext("2d");
-  gfx.moveTo( start.x, start.y);
+  gfx.translate( start.x, start.y );
 
   return gfx;
 }
 
 function moveTo( gfx, pos ) {
-  gfx.lineTo( start.x + pos.x, start.y + pos.y );
+  gfx.lineTo( pos.x, pos.y );
   gfx.stroke();
+}
+
+function markLocation( gfx, pos, color ) {
+  gfx.strokeStyle = color;
+  gfx.strokeRect( pos.x-20, pos.y-20, 40, 40);
 }
 
 function finish( gfx, pos ) {
   gfx.strokeStyle="#FF0000";
 
-  gfx.moveTo( start.x, start.y );
-  gfx.lineTo( start.x + pos.x, start.y + pos.y );
+  gfx.moveTo( 0, 0 );
+  gfx.lineTo( pos.x, pos.y );
   gfx.stroke();
 }
 
@@ -38,6 +43,8 @@ function run() {
   var gfx = initGfx();
 
   var moves = data.split(", ");
+  var beenThere = {};
+  var doneThat = false;
 
   var dirs = {
     "N": { "L": "W", "R": "E" },
@@ -48,12 +55,13 @@ function run() {
 
   var dir = "N";
   var pos = { x:0, y:0 };
+  var shortestDistance = 0;
+
+  markLocation( gfx, pos, "#FFFFFF");
 
   for (var i=0; i < moves.length; i++) {
     var turn = moves[i].slice( 0,1 );
     var distance = parseInt( moves[i].slice( 1 ));
-
-    console.log( turn + "-" + distance );
 
     dir = dirs[dir][turn];
 
@@ -67,11 +75,27 @@ function run() {
       pos.y += distance;
     }
     moveTo( gfx, pos );
+
+    if (beenThere[pos.x+":"+pos.y] && !doneThat) {
+      console.log( JSON.stringify( pos ));
+      console.log( JSON.stringify( beenThere ));
+
+      shortestDistance = Math.abs( pos.x ) + Math.abs( pos.y );
+      $("#answer2").text( shortestDistance );
+      markLocation( gfx, pos, "#00FF00");
+      doneThat = true;
+    }
+    beenThere[pos.x+":"+pos.y] = true;
   }
 
   finish( gfx, pos );
+
+  var shortestDistance = Math.abs( pos.x ) + Math.abs( pos.y );
+
   console.log("Final postion is " + JSON.stringify( pos ));
-  console.log("Shortest distance is " + (Math.abs( pos.x ) + Math.abs( pos.y )));
+  console.log("Shortest distance is " + shortestDistance );
+  $("#answer1").text( shortestDistance );
+  markLocation( gfx, pos, "#FF0000");
 }
 
 $( run );
