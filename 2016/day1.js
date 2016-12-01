@@ -114,7 +114,7 @@ function run() {
 
   markLocation( gfx, pos, "#a0a0a0");
 
-  for (var i=0; i < moves.length; i++) {
+  var move = function( i ) {
     var turn = moves[i].slice( 0,1 );
     var distance = parseInt( moves[i].slice( 1 ));
 
@@ -138,16 +138,23 @@ function run() {
       $("#answer2").text( shortestDistance );
       markLocation( gfx, bunny, "#00FF00");
     }
-  }
 
-  markLocation( gfx, pos, "#FF0000");
-  finish( gfx, pos );
+    i++;
+    if (i < moves.length) {
+      setTimeout( function() { move( i ); }, 50 );
 
-  shortestDistance = Math.abs( pos.x ) + Math.abs( pos.y );
+    } else {
+      markLocation( gfx, pos, "#FF0000");
+      finish( gfx, pos );
+      shortestDistance = Math.abs( pos.x ) + Math.abs( pos.y );
 
-  console.log("Final postion is " + JSON.stringify( pos ));
-  console.log("Shortest distance is " + shortestDistance );
-  $("#answer1").text( shortestDistance );
+      console.log("Final postion is " + JSON.stringify( pos ));
+      console.log("Shortest distance is " + shortestDistance );
+      $("#answer1").text( shortestDistance );
+    }
+  };
+
+  move( 0 );
 }
 
 $( run );
