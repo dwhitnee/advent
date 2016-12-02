@@ -1,0 +1,47 @@
+<!doctype html>
+<html> <head>
+<title>Cube</title>
+
+<style>
+canvas {
+  margin: 1em;
+  border: 1px solid blue;
+}
+.data {
+  font-size: 12pt;
+}
+#world {
+  width: 400px;
+  height: 400px;
+  position: relative;
+  padding: 1em;
+}
+
+.center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="center">
+  <div id="world"></div>
+</div>
+
+<hr style="margin-top: 5em">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        crossorigin="anonymous"></script>
+<script src="lib/world.js"></script>
+<script src="lib/dragger.js"></script>
+<script src="lib/spinningCube.js"></script>
+<script src="cube.js"></script>
+
+</body></html>
