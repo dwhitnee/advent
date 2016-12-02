@@ -1,0 +1,60 @@
+<!doctype html>
+<html> <head>
+<title>Day 2</title>
+</head>
+<style>
+canvas {
+  margin: 1em;
+  border: 1px solid blue;
+}
+.data {
+  font-size: 12pt;
+}
+#world {
+  width: 400px;
+  height: 200px;
+}
+
+#answer1 {
+  color: red;
+}
+#answer2 {
+  color: green;
+}
+.center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+
+</style>
+
+<body>
+<div><h2>
+  <a href="http://adventofcode.com/2016/day/2">Day 2</a>
+  <span class="data">(<a href="http://adventofcode.com/2016/day/2/input">Input Data</a>)</span>
+  </h2>
+</div>
+
+<div id="world"></div>
+
+<!--
+<div class="center">
+  <canvas id="canvas" width="600" height="400"></canvas>
+</div>
+-->
+
+<hr style="margin-top: 5em">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"
+	crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" 
+	crossorigin="anonymous"></script>
+<script src="lib/world.js"></script>
+<script src="lib/spinningCube.js"></script>
+<script src="day2.js"></script>
+
+</body></html>
