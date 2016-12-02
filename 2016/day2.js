@@ -71,7 +71,7 @@ class PINCracker {
         setTimeout( () => {
           self.gfx.drawButton( self.keypad, key, false );  // unpress button
           self.crack( 0, key, 0 );             // start cracking
-        }, 1000 );
+        }, 5000 );
       });
 
     return promise;
@@ -207,11 +207,11 @@ function crackKeypad2() {
     "1": { x: 2, y: 0, "L": "1", "R": "1", "U": "1", "D": "3" },
     "2": { x: 1, y: 1, "L": "2", "R": "3", "U": "2", "D": "6"  },
     "3": { x: 2, y: 1, "L": "2", "R": "4", "U": "1", "D": "7"  },
-    "4": { x: 3, y: 1, "L": "3", "R": "4", "U": "1", "D": "7"  },
-    "5": { x: 0, y: 2, "L": "4", "R": "6", "U": "4", "D": "8"  },
+    "4": { x: 3, y: 1, "L": "3", "R": "4", "U": "4", "D": "8"  },
+    "5": { x: 0, y: 2, "L": "5", "R": "6", "U": "5", "D": "5"  },
     "6": { x: 1, y: 2, "L": "5", "R": "7", "U": "2", "D": "A"  },
     "7": { x: 2, y: 2, "L": "6", "R": "8", "U": "3", "D": "B"  },
-    "8": { x: 3, y: 2, "L": "7", "R": "9", "U": "3", "D": "C"  },
+    "8": { x: 3, y: 2, "L": "7", "R": "9", "U": "4", "D": "C"  },
     "9": { x: 4, y: 2, "L": "8", "R": "9", "U": "9", "D": "9"  },
     "A": { x: 1, y: 3, "L": "A", "R": "B", "U": "6", "D": "A"  },
     "B": { x: 2, y: 3, "L": "A", "R": "C", "U": "7", "D": "D"  },
@@ -223,13 +223,15 @@ function crackKeypad2() {
 
   var gfx = new Graphics("canvas2", "answer2", "duration2");
   var cracker = new PINCracker( keypad, gfx );
-  cracker.getCracking( data );
+  return cracker.getCracking( data );
 }
 
 
 function run() {
   crackKeypad1().then( function() {
-    crackKeypad2();
+    crackKeypad2().then( function() {
+      $("iframe").show();
+    });
   });
 }
 

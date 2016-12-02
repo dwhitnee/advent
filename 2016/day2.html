@@ -39,7 +39,12 @@ canvas {
   align-items: center;
 }
 
-
+iframe {
+  position: absolute;
+  right: 2em;
+  top: 4em;
+  display: none;
+}
 </style>
 
 <body>
@@ -48,6 +53,12 @@ canvas {
   <span class="data">(<a href="http://adventofcode.com/2016/day/2/input">Input Data</a>)</span>
   </h2>
 </div>
+
+<!-- 560x315 -->
+
+<iframe width="560" height="315" frameborder="0" allowfullscreen
+  src="https://www.youtube.com/embed/ZqvWbMCa92g?autoplay=1">
+</iframe>
 
 <div>
   What is the Easter Bunny's bathroom code?  <span id="answer1"></span>
@@ -63,7 +74,7 @@ canvas {
 </a>
 
 <div class="part2">
-  D'oh! Here's the real code: <span id="answer2"></span>
+  D'oh, wrong keypad! Here's the real code: <span id="answer2"></span>
   <div>This will take about <span id="duration2"></span> seconds</div>
   <div>
     <canvas id="canvas2" width="300" height="300"></canvas>
