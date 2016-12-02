@@ -61,6 +61,9 @@ class PINCracker {
       crackTime = Math.ceil( moves*this.moveDuration/1000 );
     } while ( crackTime > 20);
 
+    this.totalMoves = moves;
+    this.currentMove = 0;
+
     this.gfx.updateDuration( crackTime + 5 );
 
     var key = 5;    // starting key
@@ -90,6 +93,9 @@ class PINCracker {
    * @param i step in procedure
    */
   crack( digit, key, i ) {
+    this.currentMove++;
+    this.gfx.progress( 100 * this.currentMove / this.totalMoves );
+
     if (digit >= data.length) {
       this.done();
       return;
@@ -148,6 +154,10 @@ class Graphics {
 
   updatePIN( code ) {
     $( this.pinEl ).text( code );
+  }
+
+  progress( pct ) {
+    $("progress").attr("value", pct );
   }
 
   updateDuration( crackTime ) {
