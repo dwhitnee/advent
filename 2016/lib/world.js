@@ -21,13 +21,13 @@ class GraphicsWorld {
 
     this.doAnimation = true;
 
-    this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize( width, height );
-
     // perspective (deg), aspect, near, far)
     this.camera = new THREE.PerspectiveCamera( 35, width / height, 1, 1000);
     this.camera.position.set(0,0,900);
     this.camera.lookAt( this.scene.position );
+
+    this.renderer = new THREE.WebGLRenderer();
+    this.resize( width, height );
 
     var spot = new THREE.PointLight( 0xFF9900 );
     spot.position.set( 0, 0, 1000 );
@@ -67,6 +67,13 @@ class GraphicsWorld {
       this.loop();  // restart event loop
     }
   }
+
+  resize( width, height ) {
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize( width, height );
+  }
+
 
   toggleAnimation() {
     this.setAnimation( !this.doAnimation );
