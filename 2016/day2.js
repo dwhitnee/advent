@@ -10,6 +10,14 @@ var data = [
 
 //var data = ["ULL","RRDDD","LURDL","UUUUD"];
 
+var funky = [
+  "That's not it...",
+  "I know I can remember if I get high...",
+  "hold on...",
+  "wait a second...",
+  "That's it! That's the melody to Funky Town!",
+];
+
 /**
  * Logic to walk the data to figure out the PIN for this keypad
  */
@@ -31,7 +39,7 @@ class PINCracker {
   }
 
   /**
-   * Start the cracking process, figure out how long to delay
+   * Start the cracking process, figure out how long to delay for animation
    */
   getCracking( data ) {
     this.drawPad();
@@ -52,7 +60,7 @@ class PINCracker {
     var key = 5;    // starting key
     this.gfx.drawButton( this.keypad, key, true );  // draw first button pressed
 
-
+    // start the cracking
     var self = this;
     var promise = new Promise(
       function( resolve, reject ) {
@@ -81,6 +89,10 @@ class PINCracker {
       return;
     }
 
+    if (i === 0) {
+      $(".funky").text( funky[digit] );
+    }
+
     var digitIsCracked = (i === data[digit].length);
 
     if (digitIsCracked) {
@@ -88,14 +100,14 @@ class PINCracker {
       this.code += key;
       this.gfx.updatePIN( this.code );
 
-      // crack next digit
+      // crack next digit, arrow function binds "this" for us (sweet!)
       setTimeout( () => {
         this.gfx.drawButton( this.keypad, key, false );  // unhighlight last cracked digit
         this.crack( ++digit, key, 0 );         // start next digit where we left off
       }, 1000 );
 
-    } else {
-      var move = data[digit].charAt( i );
+    } else {  // keep working on this digit
+      var move = data[digit].charAt( i );  // U,D,L,R
 
       this.gfx.drawButton( this.keypad, key, false );  // unhighlight last tested key
       key = this.keypad[key][move];
