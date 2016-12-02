@@ -23,15 +23,21 @@ var funky = [
  */
 class PINCracker {
 
+  /**
+   * @param keypad data structure for the size and shape of keys on keypad
+   * @param gfx the object that draws the output
+   */
   constructor( keypad, gfx ) {
-    this.code = "";
-    this.moveDuration = 40;  // msec
-    this.crackedColor = "#33cc33";
+    this.code = "";           // the PIN to crack
+    this.moveDuration = 40;  // msec pause between moves
+    this.crackedColor = "#33cc33";  // button turns green when cracked
     this.keypad = keypad;
     this.gfx = gfx;
   }
 
-  // initial drawing of keypad
+  /**
+   * initial drawing of keypad
+   */
   drawPad() {
     for (var key in this.keypad) {
       this.gfx.drawButton( this.keypad, key, false );
@@ -71,7 +77,7 @@ class PINCracker {
         setTimeout( () => {
           self.gfx.drawButton( self.keypad, key, false );  // unpress button
           self.crack( 0, key, 0 );             // start cracking
-        }, 2000 );
+        }, 5000 );
       });
 
     return promise;
@@ -123,13 +129,19 @@ class PINCracker {
 }
 
 
-//----------------------------------------------------------------------
+/**
+ *  Canvas drawing routines for keypad buttons and some text
+ */
 class Graphics {
+  /**
+   * @param canvasId   HTML canvas element id
+   * @param pinId      HTML text id to display PIN
+   * @param durationId HTML text id to display time left
+   */
   constructor( canvasId, pinId, durationId ) {
     var c = document.getElementById( canvasId );
     this.gfx = c.getContext("2d");
     this.gfx.translate( 50, 50 );
-    // gfx.scale( 10,10 );
     this.pinEl = document.getElementById( pinId );
     this.durationEl = document.getElementById( durationId );
   }
@@ -142,6 +154,11 @@ class Graphics {
     $( this.durationEl).text( crackTime );
   }
 
+  /**
+   * Draw a filled out outline rect to represent each button
+   * @param pressed if true draw a filled rect
+   * @param color override color of button
+   */
   drawButton( keypad, key, pressed, color ) {
     var pressedColor = color || "#a0a0a0";
     var unpressedColor = color || "#a0a0a0";
@@ -156,14 +173,14 @@ class Graphics {
     if (pressed) {
       this.gfx.fillStyle = pressedColor;
       this.gfx.fillRect( x-20, y-20, 40, 40);
-      this.gfx.fillStyle = "white";
+      this.gfx.fillStyle = "white";  // for text
     } else {
-      this.gfx.fillStyle = "white";
+      this.gfx.fillStyle = "white";  // erase first
       this.gfx.fillRect( x-20, y-20, 40, 40);
 
       this.gfx.strokeStyle = unpressedColor;
       this.gfx.strokeRect( x-20, y-20, 40, 40);
-      this.gfx.fillStyle = "black";
+      this.gfx.fillStyle = "black";  // for text
     }
 
     this.gfx.fillText( key, x-10, y+10);
@@ -227,10 +244,12 @@ function crackKeypad2() {
 }
 
 
+
+// Do the things
 function run() {
   crackKeypad1().then( function() {
     crackKeypad2().then( function() {
-      $("iframe").show();
+      $("iframe").show();  // Towelie!
     });
   });
 }
