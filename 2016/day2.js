@@ -71,7 +71,7 @@ class PINCracker {
         setTimeout( () => {
           self.gfx.drawButton( self.keypad, key, false );  // unpress button
           self.crack( 0, key, 0 );             // start cracking
-        }, 5000 );
+        }, 2000 );
       });
 
     return promise;
