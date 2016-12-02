@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
 // mouse watcher that updates a listener with deltas in mouse position.
-// var myWatcher = new Duplo.Dragger({
+// var myWatcher = new Dragger({
 //     context: this,
 //     start: function( ev ) {  // jquery event obj on mousedown
 //     },
@@ -46,6 +46,8 @@ class Dragger {
     
     this.notifyStart( ev );
     
+    // on every mouse move, call the update() callback
+    // ".Dragger" is just a tag we can later use to search for in off()
     $(document.body).on(
       {
         "mousemove.Dragger": function( ev ) {
