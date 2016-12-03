@@ -1,11 +1,12 @@
 <!doctype html>
 <html> <head>
-<title>Day 2</title>
+<title>Day 3</title>
 </head>
 <style>
 canvas {
   margin: 1em;
   border: 1px solid blue;
+  display: none;
 }
 .part2 {
   padding-top: 1em;
@@ -13,9 +14,6 @@ canvas {
 }
 .data {
   font-size: 12pt;
-}
-.funky {
-  font-style: italic;
 }
 
 #world {
@@ -39,21 +37,15 @@ canvas {
   align-items: center;
 }
 
-iframe {
-  position: absolute;
-  right: 2em;
-  top: 4em;
-  display: none;
-}
 </style>
 
 <body>
 
 <div>
   <h2>
-  <a href="http://adventofcode.com/2016/day/2">Day 2</a>
+  <a href="http://adventofcode.com/2016/day/3">Day 3</a>
   <span class="data">
-    (<a href="http://adventofcode.com/2016/day/2/input">Input Data</a>)
+    (<a href="http://adventofcode.com/2016/day/3/input">Input Data</a>)
   </span>
   <span class="data">
     (<a href="https://github.com/dwhitnee/advent/tree/master/2016/">code</a>)
@@ -61,28 +53,16 @@ iframe {
   </h2>
 </div>
 
-<iframe width="560" height="315" frameborder="0" allowfullscreen
-  src="https://www.youtube.com/embed/ZqvWbMCa92g?autoplay=1">
-</iframe>
-
 <div>
-  What is the Easter Bunny's bathroom code?  <span id="answer1"></span>
+  How many triangles by row are real?  <span id="answer1"></span>
 </div>
-
-<div>This will take about <span id="duration1"></span> seconds</div>
-
-<progress value="0" max="100"></progress>
 
 <div>
   <canvas id="canvas1" width="200" height="200"></canvas>
 </div>
-<a href="https://www.youtube.com/watch?v=ZqvWbMCa92g">
-  <div class="funky">Hmmm...</div>
-</a>
 
 <div class="part2">
-  D'oh, wrong keypad! Here's the real code: <span id="answer2"></span>
-  <div>This will take about <span id="duration2"></span> seconds</div>
+  How many triangles by column are real?  <span id="answer2"></span>
   <div>
     <canvas id="canvas2" width="300" height="300"></canvas>
   </div>
@@ -91,6 +71,7 @@ iframe {
 <hr style="margin-top: 5em">
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
-<script src="day2.js"></script>
+<script src="data3.js"></script>
+<script src="day3.js"></script>
 </body>
 </html>
