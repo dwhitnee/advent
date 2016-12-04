@@ -1,11 +1,10 @@
 /*global $ */
 
 // var inputURL = "http://adventofcode.com/2016/day/4/input";  // No CORS alas
-
 function getData( error, callback ) {
   $.get("input/day4")
     .done( function( input ) {
-      callback.call( null, input.split( /\s+/ ) );
+      callback.call( {}, input.split( /\s+/ ) );
     });
 }
 
@@ -45,19 +44,19 @@ class Room {
       return this._decryptedName;
     }
 
-    var amount = this.sectorId % 26;
+    var rot = this.sectorId % 26;
     var str = this.name;
     this._decryptedName = "";
 
     for (var i = 0; i < str.length; i ++) {
       var c = str[i];
       if (c==="-") c = " ";
-      var code = str.charCodeAt(i);
 
+      var code = str.charCodeAt(i);
       if ((code >= 65) && (code <= 90))        // Uppercase letters
-        c = String.fromCharCode(((code - 65 + amount) % 26) + 65);
+        c = String.fromCharCode(((code - 65 + rot) % 26) + 65);
       else if ((code >= 97) && (code <= 122))  // Lowercase letters
-        c = String.fromCharCode(((code - 97 + amount) % 26) + 97);
+        c = String.fromCharCode(((code - 97 + rot) % 26) + 97);
 
       this._decryptedName += c;
     }
@@ -146,7 +145,7 @@ function addUpValidSectorIds( rooms, gfx, callback ) {
 
   var sectorIdSum = 0;
   var delay = 10000 / rooms.length;  // take 10s total
-  delay = 0;
+  delay = 0; // no don't, but setTimeout(0) allows us to yield to the browser renderer.
 
   var checkRoom = function( roomIndex ) {
     gfx.progress( 100* roomIndex / rooms.length);
@@ -187,6 +186,7 @@ function doPartOne( data ) {
 
 function run() {
   getData( {}, doPartOne );
+  // doPartOne( testdata );
 }
 
 $( run );
