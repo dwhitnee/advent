@@ -48,7 +48,7 @@ class TriangleChecker {
       }
     }
     this.done();
-    }
+  }
 }
 
 
