@@ -14,6 +14,9 @@ canvas {
 .data {
   font-size: 12pt;
 }
+#rooms {
+  padding: 1em;
+}
 
 #world {
   width: 400px;
@@ -62,12 +65,12 @@ canvas {
 </div>
 
 <div class="part2">
-  Sector ID of the room where North Pole objects?  <span id="answer2"></span>
+  Sector ID of the room where North Pole objects are stored?  <span id="answer2"></span>
   <div>
     <canvas id="canvas2" width="300" height="300"></canvas>
   </div>
 </div>
-
+<progress value="0" max="100"></progress>
 <div id="rooms"></div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>

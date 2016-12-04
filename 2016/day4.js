@@ -113,6 +113,10 @@ class Graphics {
     this.roomEl = document.getElementById( roomId );
   }
 
+  progress( pct ) {
+    $("progress").attr("value", pct );
+  }
+
   drawRoom( room ) {
     if (room.isValid()) {
       $( this.roomEl ).css("color", "green");
@@ -146,6 +150,8 @@ function addUpValidSectorIds( rooms, gfx, callback ) {
   var delay = 10000 / rooms.length;  // take 10s total
 
   var checkRoom = function( roomIndex ) {
+    gfx.progress( 100* roomIndex / rooms.length);
+
     if (rooms.length == roomIndex) {
       callback.call( null, sectorIdSum );
       return;
