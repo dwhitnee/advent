@@ -137,8 +137,6 @@ class Graphics {
 }
 
 
-
-
 /**
  * @param rooms - array of room strings
  * @param gfx - graphics handler
@@ -148,6 +146,7 @@ function addUpValidSectorIds( rooms, gfx, callback ) {
 
   var sectorIdSum = 0;
   var delay = 10000 / rooms.length;  // take 10s total
+  delay = 0;
 
   var checkRoom = function( roomIndex ) {
     gfx.progress( 100* roomIndex / rooms.length);
@@ -179,24 +178,6 @@ function addUpValidSectorIds( rooms, gfx, callback ) {
 function doPartOne( data ) {
   var gfx = new Graphics("canvas1", "answer1", "room");
 
-  var promise = new Promise(
-    function( resolve, reject ) {
-      addUpValidSectorIds(
-        data, gfx,
-        function( total ) {
-          gfx.updateAnswer( total );
-          resolve();
-        });
-    });
-}
-
-
-//----------------------------------------------------------------------
-function doPartTwo( data ) {
-  $(".part2").show();
-
-  var gfx = new Graphics("canvas2", "answer2", "duration2");
-
   addUpValidSectorIds(
     data, gfx,
     function( total ) {
@@ -204,9 +185,7 @@ function doPartTwo( data ) {
     });
 }
 
-
 function run() {
-  // doPartOne( testdata );
   getData( {}, doPartOne );
 }
 
