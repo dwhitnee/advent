@@ -132,8 +132,11 @@ function crackPassword( data ) {
     door.calculateIndexedPassword().then( function() {
       $("#password2").text( door.password );
       $("#timing2").text( (Date.now() - start)  / 1000);
+
+      $("#password2").addClass("blink");
     });
   });
+
 
 }
 

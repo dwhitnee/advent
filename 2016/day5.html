@@ -16,6 +16,16 @@ canvas {
 }
 #password1, #password2 {
   font-family: "Courier New", "monospace";
+  font-size: larger;
+}
+.blink {
+  animation: blink 1.1s linear infinite;
+}
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    50.01% { opacity: 0; }
+    100% { opacity: 0; }
 }
 
 #world {
