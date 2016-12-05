@@ -1,0 +1,98 @@
+<!doctype html>
+<html> <head>
+<title>Day 5</title>
+</head>
+<style>
+canvas {
+  margin: 1em;
+  border: 1px solid blue;
+  display: none;
+}
+.part2 {
+  padding-top: 1em;
+}
+.data {
+  font-size: 12pt;
+}
+#password1, #password2 {
+  font-family: "Courier New", "monospace";
+}
+
+#world {
+  width: 400px;
+  height: 400px;
+  position: relative;
+  padding: 1em;
+}
+
+#answer1 {
+  color: green;
+}
+#answer2 {
+  color: green;
+}
+.center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+iframe {
+  position: absolute;
+  right: 2em;
+  top: 4em;
+}
+</style>
+
+<body>
+
+<div>
+  <h2>
+  <a href="http://adventofcode.com/2016/day/5">Day 5</a>
+  <span class="data">
+    (<a href="http://adventofcode.com/2016/day/5/input">Input Data</a>)
+  </span>
+  <span class="data">
+    (<a href="https://github.com/dwhitnee/advent/tree/master/2016/">code</a>)
+  </span>
+  </h2>
+</div>
+
+<h3>Would you like to play a game?</h3>
+
+<iframe width="560" height="315" allowfullscreen
+  src="https://www.youtube.com/embed/NHWjlCaIrQo&autoplay=1" frameborder="0">
+</iframe>
+
+<iframe width="560" height="315" frameborder="0" allowfullscreen
+  src="https://youtu.be/NHWjlCaIrQo?t=7s&autoplay=1">
+</iframe>
+
+<div>
+  <div id="room"></div>
+  First door password:  <span id="password1"></span>
+</div>
+
+Searching: <span id="candidate1"></span>
+<br/>
+Time: <span id="timing1">...</span> sec
+
+<br><br>
+<br><br>
+
+<div>
+  <div id="room"></div>
+  Second door password:  <span id="password2"></span>
+</div>
+
+Searching: <span id="candidate2"></span>
+<br/>
+Time: <span id="timing2">...</span> sec
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.6.0/js/md5.min.js"></script>
+<script src="lib/WorkerThread.js"></script>
+<script src="day5.js"></script>
+</body>
+</html>

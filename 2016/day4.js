@@ -1,4 +1,5 @@
-/*global $ */
+/*global $, WorkerThread */
+
 
 // var inputURL = "http://adventofcode.com/2016/day/4/input";  // No CORS alas
 function getData( error, callback ) {
@@ -97,7 +98,7 @@ class Room {
 
 
 /**
- *  Canvas drawing routines for ???
+ *  Canvas drawing routines
  */
 class Graphics {
   /**
@@ -136,52 +137,36 @@ class Graphics {
 }
 
 
-/**
- * @param rooms - array of room strings
- * @param gfx - graphics handler
- * @param - callback( sumOfValidSectorIds ) when done
- */
-function addUpValidSectorIds( rooms, gfx, callback ) {
+//----------------------------------------------------------------------
+function doPartOne( rooms ) {
+  var gfx = new Graphics("canvas1", "answer1", "room");
+  var totalOfSectorIds = 0;
 
-  var sectorIdSum = 0;
-  var delay = 10000 / rooms.length;  // take 10s total
-  delay = 0; // no don't, but setTimeout(0) allows us to yield to the browser renderer.
-
-  var checkRoom = function( roomIndex ) {
-    gfx.progress( 100* roomIndex / rooms.length);
-
-    if (rooms.length == roomIndex) {
-      callback.call( null, sectorIdSum );
-      return;
-    }
-
-    if (rooms[roomIndex]) {
-      var room = new Room( rooms[roomIndex] );
+  function doWork( i ) {
+    if (rooms[i]) {
+      var room = new Room( rooms[i] );
       gfx.drawRoom( room );
       if (room.isValid()) {
-        sectorIdSum += room.sectorId;
+        totalOfSectorIds += room.sectorId;
       }
     }
 
-    setTimeout( function() {
-      checkRoom( ++roomIndex );
-    }, delay );
-  };
+    return i < rooms.length;  // if true, keep working
+  }
 
-  checkRoom( 0 );
-}
+  // a worker fakes a thread that calls doWork until done, but yields
+  // after each unit is complete (and calls doProgress)
+  var worker = new WorkerThread(
+    doWork,
+    () => { gfx.updateAnswer( totalOfSectorIds ); },
+    {
+      progressFn: pct => { gfx.progress( pct ); },
+      totalWorkUnits: rooms.length,
+      totalTime: 5000
+    }
+  );
 
-
-
-//----------------------------------------------------------------------
-function doPartOne( data ) {
-  var gfx = new Graphics("canvas1", "answer1", "room");
-
-  addUpValidSectorIds(
-    data, gfx,
-    function( total ) {
-      gfx.updateAnswer( total );
-    });
+  worker.start();
 }
 
 function run() {
