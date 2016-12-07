@@ -1,0 +1,53 @@
+<!doctype html>
+<html> <head>
+<title>Day 7</title>
+</head>
+<style>
+.data {
+  font-size: 12pt;
+}
+.hasTLS {
+  color: green; font-weight: bold;
+}
+.hasSSL {
+  color: green; font-style: italic;
+}
+
+#ipAddrs {
+ color: lightGray;
+}
+</style>
+
+
+<body>
+<div>
+  <h2>
+  <a href="http://adventofcode.com/2016/day/7">Day 7</a>
+  <span class="data">
+    (<a href="http://adventofcode.com/2016/day/7/input">Input Data</a>)
+  </span>
+  <span class="data">
+    (<a href="https://github.com/dwhitnee/advent/tree/master/2016/">code</a>)
+  </span>
+  </h2>
+</div>
+
+<div>
+  IPv7 Addresses that suppot TLS:  <span id="answer1"></span>
+</div>
+<div>
+  IPv7 Addresses that suppot SSL:  <span id="answer2"></span>
+</div>
+
+Time: <span id="timing1">...</span> sec
+<br>
+<br>
+
+IP Addresses:
+<div id="ipAddrs"></divs>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+<script src="lib/workerThread.js"></script>
+<script src="day7.js"></script>
+</body>
+</html>
