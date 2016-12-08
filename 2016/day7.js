@@ -45,7 +45,9 @@ class IPV7Address {
   checkSSLSupport( aba, bab ) {
     for (var a=0; a < aba.length; a++) {
       for (var b=0; b < bab.length; b++) {
-        this._supportsSSL = (aba[a].charAt(0) === bab[b].charAt(1));
+        this._supportsSSL |=
+          ((aba[a].charAt(0) === bab[b].charAt(1)) &&
+           (aba[a].charAt(1) === bab[b].charAt(2)));
       }
     }
   }
@@ -72,15 +74,8 @@ class IPV7Address {
       this.hasBadABBA  |= this.hasABBA( match[2] );  // "gffg" then "def"
 
       // collect ABA's and BAB's
-      // TBD
-
-      if (this.getABA( match[1] )) {
-        aba.push( this.getABA( match[1] ));
-      }
-
-      if (this.getBAB( match[2] )) {
-        bab.push( this.getBAB( match[2] ));
-      }
+      aba = aba.concat( this.getABA( match[1] ));
+      bab = bab.concat( this.getBAB( match[2] ));
 
       addr = match[3];  // remainder
     } while ((match.length > 3) && addr.match(/\[/))
@@ -88,9 +83,7 @@ class IPV7Address {
     // check trailing part, too
     this.hasGoodABBA |= this.hasABBA( addr );    // "poop"
 
-    if (this.getABA( addr )) {
-      aba.push( this.getABA( addr ));
-    }
+    aba = aba.concat( this.getABA( addr ));
 
     this.checkSSLSupport(aba, bab);
 
@@ -114,7 +107,7 @@ class IPV7Address {
 
   // @return true if any 3-char sequence matches ABA pattern
   getABA( str ) {
-    var aba;
+    var aba = [];
 
     if (str.length < 3) {
       return aba;
@@ -124,7 +117,7 @@ class IPV7Address {
       if ((str.charAt(i) === str.charAt(i+2)) &&
           (str.charAt(i) !== str.charAt(i+1)))
       {
-        aba = str.substr( i, 3 );
+        aba.push( str.substr( i, 3 ));
       }
     }
     return aba;
@@ -132,7 +125,7 @@ class IPV7Address {
 
   // @return true if any 3-char sequence matches BAB pattern
   getBAB( str ) {
-    var bab;
+    var bab = [];
 
     if (str.length < 3) {
       return bab;
@@ -142,7 +135,7 @@ class IPV7Address {
       if ((str.charAt(i) === str.charAt(i+2)) &&
           (str.charAt(i) !== str.charAt(i+1)))
       {
-        bab = str.substr( i, 3 );
+        bab.push( str.substr( i, 3 ));
       }
     }
     return bab;
