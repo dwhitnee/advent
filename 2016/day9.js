@@ -1,5 +1,8 @@
 /*global $, getData */
 
+// Uses too much memory, need to jack it up:
+//   node --max_old_space_size=4096 day9.js
+
 "use strict";
 
 class RLE {
@@ -8,7 +11,8 @@ class RLE {
 
   // turn A(1x5)BC into ABBBBBC
   decompress( input ) {
-    var output= "";
+    var doText = true;  // can't do text normally because string would be 11451628995 chars
+    var output= (doText? "":0);
     var marker;
 
     for (var i=0; i < input.length; i++) {
@@ -18,7 +22,7 @@ class RLE {
         if (ch === "(") {
           marker = "X";          // start reading marker (not part of output)
         } else {
-          output += ch;         // pass through output
+          output += doText?ch:1;         // pass through output
         }
       } else {
         if (ch !== ")") {
@@ -42,7 +46,6 @@ class RLE {
 }
 
 // same syntax as ajax version
-/*
 function getData( filename ) {
   return new Promise(
     function( resolve, reject ) {
@@ -50,13 +53,21 @@ function getData( filename ) {
       resolve( fs.readFileSync( filename, 'utf8'));
     });
 }
-*/
 
 function runTest() {
   var rle = new RLE();
-  var data = "(3x3)XYZ";
-  var output = rle.decompress( data );
-  $("#answer1").text( output.length + " " + output );
+
+  var data =[
+    "X(8x2)(3x3)ABCY",
+    "(3x3)XYZ",
+//    "(27x12)(20x12)(13x14)(7x10)(1x12)A", // 241920
+    "(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN" // 445
+  ];
+
+  for (var i=0; i < data.length; i++) {
+    var output = rle.decompress( data[i] );
+    $("#answer"+(i+1)).text( output.length + " " + output );
+  }
 }
 
 function run(){
@@ -64,9 +75,19 @@ function run(){
   getData("input/day9").then(
     data => {
       var output = rle.decompress( data );
-      // console.log( output.length );
       $("#answer1").text( output.length );
     });
 };
 
-$( runTest );
+
+
+if (typeof $ !== 'undefined' ) {
+  $( runTest );
+
+} else {
+  var $ = function() {
+    return { text: str => { console.log( str ); }};
+  };
+
+  runTest();
+}
