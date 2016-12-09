@@ -1,19 +1,5 @@
 /*global $, WorkerThread */
 
-function getData( url ) {
-  return new Promise(
-    function( resolve, reject ) {
-      $.get( url )
-        .done( function( input ) {
-          resolve( input.split( /\s+/ ));
-        })
-        .fail( function( err ) {
-          reject( err );
-        });
-    });
-}
-
-
 
 /**
  *
