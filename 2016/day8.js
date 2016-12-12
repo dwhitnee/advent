@@ -1,10 +1,5 @@
 /*global $, WorkerThread, getData */
 
-var data = [
-];
-
-//var data = ["ULL","RRDDD","LURDL","UUUUD"];
-
 /**
  * Logic to walk the data to figure out the PIN for this keypad
  */
@@ -59,6 +54,8 @@ class Screen {
    *
    */
   handleCommand( cmd ) {
+    if (!cmd) return;
+
     var tokens = cmd.split(" ");
 
     if (tokens[0] === "rect") {
@@ -127,8 +124,6 @@ class Graphics {
     var c = document.getElementById( canvasId );
     this.screen = screen;
     this.gfx = c.getContext("2d");
-    this.gfx.translate( 50, 50 );
-    this.gfx.scale( 3, 3 );
     this.durationEl = document.getElementById( durationId );
   }
 
@@ -150,6 +145,9 @@ class Graphics {
     var neutral = "#888";
 
     this.gfx.save();
+
+    this.gfx.translate( 50, 50 );
+    this.gfx.scale( 3, 3 );
 
     this.gfx.fillStyle = neutral;
     this.gfx.fillRect( -10, -10, this.screen.width*3+20, this.screen.height*3+20 );
@@ -182,7 +180,7 @@ function processScreenCommands( data ) {
   function doWork( i ) {
     var line = data[i];
     if (!line) {
-      return false;
+      return false;  // EOF or bad data
     }
     screen.handleCommand( line );
     return i < data.length;
@@ -193,6 +191,7 @@ function processScreenCommands( data ) {
       var worker = new WorkerThread(
         doWork,
         () =>  {
+          // gfx.restore();
           resolve( screen.pixelsLit() );
         },
         {
@@ -207,22 +206,28 @@ function processScreenCommands( data ) {
     });
 }
 
-function run() {
-
-  var testdata = [
-    "rect 3x2",
-    "rotate column x=1 by 1",
-    "rotate row y=0 by 4",
-    "rotate column x=1 by 1"];
-//  processScreenCommands( data );
-
-  getData("input/day8").then(
-    data => {
-      processScreenCommands( data ).then(
-        pixels => {
-          $("#answer1").text( pixels );
-        });
+function run( data ) {
+/*
+rect 3x2
+rotate column x=1 by 1
+rotate row y=0 by 4
+rotate column x=1 by 1
+*/
+  processScreenCommands( data ).then(
+    pixels => {
+      $("#answer1").text( pixels );
     });
 }
 
-$( run );
+function waitForButton() {
+  $("button").on("click", function() {
+    var input = $("textarea").val();
+    if (input) {
+      run( input.split( /\n/ ));
+    } else {
+      getData("input/day8").then( data => run( data ));
+    }
+  });
+}
+
+$( waitForButton );

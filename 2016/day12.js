@@ -147,7 +147,7 @@ function runProgram( program ) {
 }
 
 
-function run() {
+function run( program ) {
   var testdata = [
     "cpy 41 a",
     "inc a",
@@ -161,14 +161,24 @@ function run() {
   // cpu.run( testdata );
   // console.log("Register A = " + cpu.registers.a );
 
-  getData("input/day12").then(
-    program => {
-      runProgram( program ).then(
-        cpu => {
-          $("#answer1").text( cpu.registers.a );
-          $("#answer1").append( $("<div/>").text( cpu.linesExecuted + " lines executed"));
-        });
+  runProgram( program ).then(
+    cpu => {
+      $("#answer1").text( cpu.registers.a );
+      $("#answer1").append( $("<div/>").text( cpu.linesExecuted + " lines executed"));
     });
+
 }
 
-$( run );
+
+function waitForButton() {
+  $("button").on("click", function() {
+    var input = $("textarea").val();
+    if (input) {
+      run( input.split( /\n/ ));
+    } else {
+      getData("input/day12").then( data => run( data ));
+    }
+  });
+}
+
+$( waitForButton );
