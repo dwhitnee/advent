@@ -1,0 +1,66 @@
+<!doctype html>
+<html> <head>
+<title>Day 12</title>
+<style>
+  .registers ul {
+    margin: 0;
+  }
+  .output {
+    margin: 1em;
+  }
+  canvas {
+    margin: 1em;
+    display: none;
+    /*  border: 1px solid blue; */
+  }
+  .part2 {
+    padding-top: 1em;
+    display: none;
+  }
+  .data {
+    font-size: 12pt;
+  }
+  #answer1 {
+    color: green;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h2>
+  <a href="http://adventofcode.com/2016/day/12">Day 12</a>
+  <span class="data">
+    (<a href="http://adventofcode.com/2016/day/12/input">Input Data</a>)
+  </span>
+  <span class="data">
+    (<a href="https://github.com/dwhitnee/advent/tree/master/2016/">code</a>)
+  </span>
+  </h2>
+</div>
+
+<div>
+  CPU Register A = <span id="answer1"></span>
+</div>
+<progress value="0" max="100"></progress>
+
+<div class="registers">
+  <ul>A = <span id="a"></span></ul>
+  <ul>B = <span id="b"></span></ul>
+  <ul>C = <span id="c"></span></ul>
+  <ul>D = <span id="d"></span></ul>
+  <ul>PC = <span id="pc"></span> (<span id="instruction"></span>)</ul>
+</div>
+
+<canvas id="canvas1"></canvas>
+
+<div id="output"></div>
+
+<hr style="margin-top: 5em">
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+<script src="lib/util.js"></script>
+<script src="lib/workerThread.js"></script>
+<script src="day12.js"></script>
+</body>
+</html>
