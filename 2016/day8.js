@@ -118,20 +118,15 @@ class Graphics {
   /**
    * @param canvasId   HTML canvas element id
    * @param pinId      HTML text id to display PIN
-   * @param durationId HTML text id to display time left
    */
-  constructor( canvasId, screen, durationId ) {
+  constructor( canvasId, screen ) {
     var c = document.getElementById( canvasId );
     this.screen = screen;
     this.gfx = c.getContext("2d");
-    this.durationEl = document.getElementById( durationId );
   }
 
   progress( pct ) {
     $("progress").attr("value", pct );
-  }
-  updateDuration( crackTime ) {
-    $( this.durationEl).text( crackTime );
   }
 
   /**
@@ -162,6 +157,7 @@ class Graphics {
         this.gfx.fillRect( x*3, y*3, 2, 2);
       }
     }
+
     this.gfx.restore();
   }
 }
@@ -206,13 +202,18 @@ function processScreenCommands( data ) {
     });
 }
 
-function run( data ) {
-/*
+
+
+
+
+/* TEST DATA
 rect 3x2
 rotate column x=1 by 1
 rotate row y=0 by 4
 rotate column x=1 by 1
 */
+
+function run( data ) {
   processScreenCommands( data ).then(
     pixels => {
       $("#answer1").text( pixels );
