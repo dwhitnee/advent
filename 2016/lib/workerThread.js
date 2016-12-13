@@ -24,7 +24,7 @@ class WorkerThread {
     this.totalWorkUnits = config.totalWorkUnits;
     this.chunkSize = config.chunkSize || 1;  // 10,000 seems to be the same as "infinite"
 
-    console.log("Chunk size " + this.chunkSize);
+    // console.log("Chunk size " + this.chunkSize);
     this.delay = 0;
     if (config.totalTime && this.totalWorkUnits)  {
       this.delay = config.totalTime / this.totalWorkUnits;
