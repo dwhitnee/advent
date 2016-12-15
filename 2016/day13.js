@@ -12,8 +12,8 @@ class Graphics {
   constructor( canvasId, maze ) {
     var c = document.getElementById( canvasId );
     this.scale = 3;
-    c.width = maze.width * this.scale*4;
-    c.height = maze.height * this.scale*5;
+    c.width = maze.width * this.scale*3 + 20;
+    c.height = maze.height * this.scale*3 + 20;
 
     this.maze = maze;
     this.gfx = c.getContext("2d");
