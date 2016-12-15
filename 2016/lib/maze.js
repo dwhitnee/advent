@@ -1,12 +1,5 @@
 /*global postMessage */
 
-// busy wait, hard to do setTimeout in a recursive function
-function spin( times ) {
-  for (var stupid=0; stupid < times; stupid++ ) {
-    console.warn(stupid);
-  }
-}
-
 
 var YA_CANT_GET_THERE_FROM_HERE = -1;
 
@@ -47,91 +40,115 @@ class Maze {
     return this.nearby[x+":"+y];
   }
 
-  solve() {
-    this.distance = this.findShortestPathWithBreadthFirstSearch( this.start, this.goal );
-  }
-
-  // @return check whether given cell (row, col) is a valid cell or not.
+  // @return bool, given cell is a valid cell (non-negative coords)
   isValid( x, y ) {
-    // return true if row number and column number is in range
     return (x >= 0) && (y >= 0);
-      // && (y < this.height) && (x < this.width);
+     // && (x < this.width) && (y < this.height);  // we're "infinite"
   }
 
-  /* function to find the shortest path between a given source cell to a destination cell.
+  solve() {
+    return this.findShortestPathWithBreadthFirstSearch( this.start, this.goal );
+  }
+
+
+  /*
+   * function to find the shortest path between a given source cell to a destination cell.
    * @param src {x,y}
    * @param dest {x,y}
    * @return distance travelled
    */
-  // 0 = wall, 1 = clear
   findShortestPathWithBreadthFirstSearch( src, dest ) {
-
     this.beenThere = {};
     this.path = {};
     this.nearby = {};
     this.nearby[src.x+":"+src.y] = true;
+    this.distance = YA_CANT_GET_THERE_FROM_HERE;
 
-    var neighbors = [
-      {x:0,y:-1},
-      {x:-1,y:0},
-      {x:1,y:0},
-      {x:0,y:1}
-    ];
+    return new Promise(
+      (resolve, reject) => {
+        // precondition
+        if (this.isWall( src.x, src.y) || this.isWall( dest.x, dest.y )) {
+          reject();
+        }
 
-    if (this.isWall( src.x, src.y) || this.isWall( dest.x, dest.y )) {
+        this.setWasHere( src.x, src.y );
+
+        this.queue = [];  // Create a queue of searchable cells
+
+        // start at source, distance of source cell is 0
+        this.queue.push( { x: src.x, y: src.y, dist: 0 });
+
+        var self = this;
+        function queueWalker() {
+          var distance = self.walkQueue( dest );
+
+          if (distance > 0) {
+            self.distance = distance;
+            resolve();                        // done!
+          }
+
+          if (self.queue.length > 0) {
+            setTimeout( () => { queueWalker(); }, 50);       // keep walking
+          } else {
+            reject();                        // d'oh, we never found the goal
+          }
+        }
+
+        queueWalker();   // start walking
+      });
+  }
+
+  /**
+   * Process one cell in the breadth-first search queue
+   * @return positive distance to destination OR
+   *  -1 if the queue walk was unsuccessful (no path to dest) OR
+   *  0 if more quue to walk
+   */
+  walkQueue( dest ) {
+    if (!this.queue.length) {
       return YA_CANT_GET_THERE_FROM_HERE;
     }
 
-    this.setWasHere( src.x, src.y );
+    // let's examine the first cell in the queue (only once)
+    var curr = this.queue.shift();
 
-    var q = [];  // Create a queue for BFSearch
-
-    // distance of source cell is 0
-    var srcNode = { x: src.x, y: src.y, dist: 0 };
-    q.push( srcNode );  // head of the queue
-
-    // Do a BFS starting from source cell until we find the goal
-    while (q.length > 0) {  // go until empty
-
-      // update boss of our state
-      var curr = q[0];
-
-      // Yippee! We are done
-      if ((curr.x === dest.x) && (curr.y === dest.y)) {
-        console.log( JSON.stringify(this.nearby));
-        return curr.dist;
-      }
-
-      // Otherwise remove the first cell in the queue and enqueue its adjacent cells
-      q.shift();
-
-      for (var i = 0; i < 4; i++) {
-        var x = curr.x + neighbors[i].x;
-        var y = curr.y + neighbors[i].y;
-
-        // if adjacent cell is valid, has path and not visited yet, enqueue it.
-        if (this.isValid( x,y ) && !this.isWall( x,y ) && !this.wasHere( x,y)) {
-          // mark cell as visited and enqueue it
-          this.setWasHere( x,y );
-          var adjacent = { x: x,
-                           y: y,
-                           dist: curr.dist + 1 };
-          q.push( adjacent );
-
-          // places within 50 steps, hack
-          if (curr.dist < 50) {
-            this.nearby[x+":"+y] = true;
-          }
-
-          postMessage({ msg: "update", maze: this });
-          spin( 1000 );
-        }
-      }
+    // Yippee! We are done
+    if ((curr.x === dest.x) && (curr.y === dest.y)) {
+      return curr.dist;
     }
 
-    // d'oh, we never found the goal
-    return YA_CANT_GET_THERE_FROM_HERE;
+    var neighbors = [
+      { x: 0, y:-1 },
+      { x:-1, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: 1 }
+    ];
+
+    // enqueue the adjacent 4 cells if they are accessible
+    for (var i = 0; i < 4; i++) {
+      var x = curr.x + neighbors[i].x;
+      var y = curr.y + neighbors[i].y;
+
+      if (this.isValid( x,y ) && !this.isWall( x,y ) && !this.wasHere( x,y)) {
+        // mark cell as visited and enqueue it
+        this.setWasHere( x,y );
+        var adjacent = { x: x,
+                         y: y,
+                         dist: curr.dist + 1 };
+        this.queue.push( adjacent );
+
+        // places within 50 steps, hack
+        if (curr.dist < 50) {
+          this.nearby[x+":"+y] = true;
+        }
+
+        // update boss of our state
+        postMessage({ msg: "update", maze: this });
+      }
+    }
+    return 0;
   }
+
 
   print() {
     for (var y=0; y < this.height; y++) {
@@ -187,12 +204,14 @@ self.addEventListener('message', function(e) {
   if (maze.favoriteNumber) {
     maze.__proto__ = Maze.prototype;  // cheat and re-objectify
     console.log("Worker: Message received maze");
-    maze.solve();
-    postMessage({ msg: "done", maze: maze });
 
-    // commit suicide
-    console.log("Worker: Bye!");
-    self.close();
+    maze.solve().then(
+      function() {
+        postMessage({ msg: "done", maze: maze });
+        console.log("Worker: Bye!");
+        self.close();        // commit suicide
+      });
+
   } else {
     console.log("Worker recieved weird event: " + e.data);
   }
