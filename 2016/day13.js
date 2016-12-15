@@ -1,7 +1,6 @@
 /*global $, Maze, WorkerThread, getData, Worker */
 
 // import lib/maze.js
-
 /**
  *  Canvas drawing routines for maze and path
  */
@@ -13,8 +12,8 @@ class Graphics {
   constructor( canvasId, maze ) {
     var c = document.getElementById( canvasId );
     this.scale = 3;
-    c.width = maze.width * this.scale*3;
-    c.height = maze.height * this.scale*3;
+    c.width = maze.width * this.scale*4;
+    c.height = maze.height * this.scale*5;
 
     this.maze = maze;
     this.gfx = c.getContext("2d");
@@ -123,23 +122,25 @@ function run( favoriteNumber ) {
 
   var gfx = new Graphics("canvas1", maze );
   gfx.drawMaze( maze );
-  maze.print();
+  // maze.print();
 
   var worker = new Worker("lib/maze.js");  // maze is also a worker, hacky?
 
   worker.onmessage = function(e) {
     // console.log("receieved: " + e);
-    var maze = e.data;
+    var maze = e.data.maze;
     maze.__proto__ = Maze.prototype;  // cheat and re-objectify
     gfx.drawMaze( maze );
-    console.log( Object.keys( maze.path ).length + ", " + Object.keys( maze.beenThere ).length );
+
+    if (e.data.msg === "done") {
+      $("#answer1").text( maze.distance );
+      $("#answer2").text( Object.keys( maze.nearby ).length);
+    }
+    // console.log( Object.keys( maze.beenThere ).length );
     // maze.print();
   };
 
-  // tell worker what to do
-  // receive updates from worker
   worker.postMessage( maze );  // this will solve the maze, expect updates as it goes.
-
 
   // doAllTheThings( favoriteNumber ).then(
   //   maze => {
