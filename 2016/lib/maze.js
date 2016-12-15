@@ -88,7 +88,7 @@ class Maze {
           }
 
           if (self.queue.length > 0) {
-            setTimeout( () => { queueWalker(); }, 50);       // keep walking
+            setTimeout( () => { queueWalker(); }, 20);       // keep walking
           } else {
             reject();                        // d'oh, we never found the goal
           }
