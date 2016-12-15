@@ -67,56 +67,6 @@ class Graphics {
 }
 
 
-/*
-// @return a promise to do the work
-function doAllTheThings( favoriteNumber ) {
-
-  var maze = new Maze( favoriteNumber );
-
-  // FIXME!!!  Need WebWorkers to make graphics work in a recursive function
-
-  maze.setStart( 1, 1 );
-  // maze.setGoal( 7, 4 );
-  maze.setGoal( 31, 39 );
-
-  var gfx = new Graphics("canvas1", maze );
-  maze.gfx = gfx;
-
-  maze.solve();
-  gfx.drawMaze();
-  maze.print();
-
-  // maze.print( 50, 50 );
-  $("#answer1").text( Object.keys( maze.path ).length );
-
-  // worker function
-  function doWork( i ) {
-    return false;
-    // maze.findNextStepInPath();
-    // return !maze.foundPath();
-  }
-
-  return new Promise(
-    function( resolve, reject ) {
-      var worker = new WorkerThread(
-        doWork,
-        () =>  {
-          resolve( maze );
-        },
-        {
-          progressFn: (pct) => {
-            gfx.progress( pct );
-          }
-          // chunkSize: 10000
-          // totalWorkUnits: data.length,
-          // totalTime: 5000
-        });
-      worker.start();
-    });
-}
- */
-
-
 function run( favoriteNumber ) {
 
   var maze = new Maze( favoriteNumber );
@@ -125,10 +75,10 @@ function run( favoriteNumber ) {
 
   var gfx = new Graphics("canvas1", maze );
   gfx.drawMaze( maze );
-  // maze.print();
 
   var worker = new Worker("lib/maze.js");  // maze is also a worker, hacky?
 
+  // handle worker updates
   worker.onmessage = function(e) {
     // console.log("receieved: " + e);
     var maze = e.data.maze;
@@ -139,16 +89,14 @@ function run( favoriteNumber ) {
       $("#answer1").text( maze.distance );
       $("#answer2").text( Object.keys( maze.nearby ).length);
     }
-    // console.log( Object.keys( maze.beenThere ).length );
-    // maze.print();
+
+    if (e.data.msg === "error") {
+      $("#answer1").text("Ya can't get there from here!!");
+      $("#answer2").text( Object.keys( maze.nearby ).length);
+    }
   };
 
   worker.postMessage( maze );  // this will solve the maze, expect updates as it goes.
-
-  // doAllTheThings( favoriteNumber ).then(
-  //   maze => {
-  //     $("#answer1").text( maze.foo );
-  //   });
 }
 
 function waitForButton() {

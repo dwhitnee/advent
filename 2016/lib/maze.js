@@ -69,6 +69,7 @@ class Maze {
         // precondition
         if (this.isWall( src.x, src.y) || this.isWall( dest.x, dest.y )) {
           reject();
+          return;
         }
 
         this.setWasHere( src.x, src.y );
@@ -85,12 +86,14 @@ class Maze {
           if (distance > 0) {
             self.distance = distance;
             resolve();                        // done!
+            return;
           }
 
           if (self.queue.length > 0) {
             setTimeout( () => { queueWalker(); }, 20);       // keep walking
           } else {
             reject();                        // d'oh, we never found the goal
+            return;
           }
         }
 
@@ -205,12 +208,19 @@ self.addEventListener('message', function(e) {
     maze.__proto__ = Maze.prototype;  // cheat and re-objectify
     console.log("Worker: Message received maze");
 
-    maze.solve().then(
-      function() {
-        postMessage({ msg: "done", maze: maze });
-        console.log("Worker: Bye!");
-        self.close();        // commit suicide
-      });
+    maze.solve()
+      .then(
+        function() {
+          postMessage({ msg: "done", maze: maze });
+          console.log("Worker: Bye!");
+          self.close();        // commit suicide
+        })
+      .catch(
+        function() {
+          postMessage({ msg: "error", maze: maze });
+          console.log("Worker: Bye!");
+          self.close();        // commit suicide
+        });
 
   } else {
     console.log("Worker recieved weird event: " + e.data);
