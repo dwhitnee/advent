@@ -27,9 +27,10 @@ class Graphics {
     var wall = "#333";
     var clear = "#ccc";
     var path = "#afa";
-    var there = "#eee";
+    var nearby = "#77f";
+    var there = "#fff";
     var neutral = "#aaa";
-    var endPoint = "#faa";
+    var endPoint = "#f33";
 
     console.log("Drawing!");
     this.gfx.save();
@@ -50,6 +51,8 @@ class Graphics {
           this.gfx.fillStyle = endPoint;
         } else if (maze.path && maze.isPath(x, y)) {
           this.gfx.fillStyle = path;
+        } else if (maze.path && maze.isNearby(x, y)) {
+          this.gfx.fillStyle = nearby;
         } else if (maze.path && maze.wasHere(x, y)) {
           this.gfx.fillStyle = there;
         } else {

@@ -3,7 +3,7 @@
 // busy wait, hard to do setTimeout in a recursive function
 function spin( times ) {
   for (var stupid=0; stupid < times; stupid++ ) {
-    // console.warn(stupid);
+    console.warn(stupid);
   }
 }
 
@@ -20,6 +20,7 @@ class Maze {
     this.favoriteNumber = favoriteNumber|0;
     this.beenThere = {};
     this.path = {};
+    this.nearby = {};
   }
 
   setStart( x, y ) {
@@ -30,22 +31,23 @@ class Maze {
     this.width = x + 20;
     this.height = y + 20;
   }
-  setWasHere(x, y) {
+  setWasHere( x, y ) {
     this.beenThere[x+":"+y] = true;
   }
-  wasHere(x, y) {
+  wasHere( x, y ) {
     return this.beenThere[x+":"+y];
   }
-  setPath(x, y) {
+  setPath( x, y ) {
     this.path[x+":"+y] = true;
   }
-  isPath(x, y) {
+  isPath( x, y ) {
     return this.path[x+":"+y];
+  }
+  isNearby( x, y ) {
+    return this.nearby[x+":"+y];
   }
 
   solve() {
-    this.beenThere = {};
-    this.path = {};
     this.distance = this.findShortestPathWithBreadthFirstSearch( this.start, this.goal );
   }
 
@@ -117,7 +119,7 @@ class Maze {
           q.push( adjacent );
 
           // places within 50 steps, hack
-          if (curr.dist <= 50) {
+          if (curr.dist < 50) {
             this.nearby[x+":"+y] = true;
           }
 
