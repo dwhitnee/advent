@@ -36,10 +36,12 @@ class Disc {
  * and the capsule falls through the slot.
 */
 class Sculpture {
-  constructor() {
+  constructor( data ) {
     this.time = 0;
     this.ballPosition = 0;
+    this.ballDropping = false;
     this.discs = {};
+    this.parseDiscs( data );
   }
 
   dropBall() {
@@ -50,11 +52,12 @@ class Sculpture {
     for (var i=0; i < time; i++) {
       this.tick();
     }
-    this.releaseBall();
+    this.dropBall();
   }
 
-  // move time forward
+  // move time forward, rotate discs, move ball down
   tick() {
+    this.time++;
     for (var id in  this.discs) {
       this.discs[id].tick();
     }
@@ -66,22 +69,19 @@ class Sculpture {
   // see if the ball fell through the current disc
   // updates ball and sculpture state
   checkBall() {
-    if (this.ballPosition > 0) {
-      var disc = this.discs[ this.ballPosition ];
+    this.ballPosition++;
 
-      if (disc.isSlotLinedUp()) {
-        this.ballPosition++;      // ball falls through
+    var disc = this.discs[ this.ballPosition ];
 
-      } else {
-        // ball bounces away
-        this.ballPosition = -1;
-        this.ballDropping = false;
-      }
+    if (disc && !disc.isSlotLinedUp()) {
+      // ball bounces away
+      this.ballPosition = -1;
+      this.ballDropping = false;
     }
   }
 
   ballFellThrough() {
-    return this.ballPosition >= this.discs.length();
+    return this.ballPosition >= Object.keys( this.discs ).length+1;
   }
 
   addDisc( disc ) {
@@ -94,7 +94,9 @@ class Sculpture {
       var match = data[i].match(
           /Disc #(\d+) has (\d+) positions; at time=(\d+), it is at position (\d+)./);
       // cheat and assume always at time 0
-      this.addDisc( new Disc( match[1], match[2], match[4] ));
+      if (match) {
+        this.addDisc( new Disc( match[1], match[2], match[4] ));
+      }
     }
   }
 }
@@ -111,12 +113,25 @@ class Graphics {
   constructor( canvasId, sculpture ) {
     this.canvas = document.getElementById( canvasId );
     this.sculpture = sculpture;
-
     this.gfx = this.canvas.getContext("2d");
   }
 
   drawSculpture() {
+    $("#time").text( this.sculpture.time );
+
     this.gfx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.gfx.save();
+
+    this.gfx.scale( 3, 3 );
+    this.gfx.translate( 20, 10 );
+
+    this.gfx.save();
+    this.gfx.translate( 0, 30*this.sculpture.ballPosition );
+    this.gfx.beginPath();
+    this.gfx.fillStyle = "#f33";
+    this.gfx.arc( 0, 0, 3, 0, 2*Math.PI );
+    this.gfx.fill();
+    this.gfx.restore();
 
     for (var discId in  this.sculpture.discs) {
       var disc = this.sculpture.discs[discId];
@@ -124,16 +139,15 @@ class Graphics {
       this.gfx.save();
 
       this.gfx.strokeStyle = "#ccc";
+      this.gfx.fillStyle = "black";
       this.gfx.lineWidth = 2;
 
-      this.gfx.scale( 3, 3 );
-      this.gfx.translate( 20, 10 + 30*discId );
-      this.gfx.rotate( disc.angle - Math.PI/2 );
+      this.gfx.translate( 0, 30*discId );
+      this.gfx.rotate( disc.angle - Math.PI/2 );  // -90 deg so north is up
 
-      this.gfx.beginPath();
-      // x, y, radius, angles
       var gap = .2;
-      this.gfx.arc( 0, 0, 10, gap, Math.PI-gap );
+      this.gfx.beginPath();
+      this.gfx.arc( 0, 0, 10, gap, Math.PI-gap );      // x, y, radius, angles
       this.gfx.closePath();
       this.gfx.stroke();
 
@@ -147,6 +161,7 @@ class Graphics {
 
       this.gfx.restore();
     }
+    this.gfx.restore();
   }
 
   progress( pct ) {
@@ -156,24 +171,25 @@ class Graphics {
 
 
 // @return a promise to do the work
-function runProgram( data ) {
+function dropBallAt( dropTime, data, gfx ) {
+
+  $("#dropTime").text( dropTime );
 
   var sculpture = new Sculpture( data );
-  sculpture.parseDiscs( data );
-
-  var gfx = new Graphics("canvas1", sculpture );
-
-  // try starting sculpture at various times and see if ball falls through.
-  // TBD
-
-  sculpture.dropBall( 0 );
+  gfx.sculpture = sculpture;
 
   // worker function
   function doWork( i ) {
-    sculpture.tick();
-
     gfx.drawSculpture();
-    return true;
+
+    if (i >= dropTime) {
+      sculpture.dropBall();
+      sculpture.tick();
+      return sculpture.ballDropping && !sculpture.ballFellThrough();
+    } else {
+      sculpture.tick();
+      return true;
+    }
   }
 
   return new Promise(
@@ -181,35 +197,46 @@ function runProgram( data ) {
       var worker = new WorkerThread(
         doWork,
         () =>  {
-          resolve( sculpture );
+          if (sculpture.ballFellThrough()) {
+            resolve( sculpture );
+          } else {
+            reject( sculpture );
+          }
         },
         {
           progressFn: (pct) => {
             gfx.progress( pct );
           },
-          // chunkSize: 10,
-          totalWorkUnits: 50,
-          totalTime: 10000
+          totalWorkUnits: dropTime+1,
+          totalTime: 1000
         });
       worker.start();
     });
 }
 
 
-function run( salt ) {
+function run( data ) {
   var testdata = [
     "Disc #1 has 5 positions; at time=0, it is at position 4.",
     "Disc #2 has 2 positions; at time=0, it is at position 1.",
-    "Disc #3 has 5 positions; at time=0, it is at position 0.",
-    "Disc #4 has 15 positions; at time=0, it is at position 2."
+    // "Disc #3 has 5 positions; at time=0, it is at position 0.",
+    // "Disc #4 has 15 positions; at time=0, it is at position 2."
   ];
 
-  runProgram( testdata ).then(
-    pad => {
-      $("#answer1").text( pad.keys[63].index + ": " + pad.keys[63].key );
-      $("#answer1").append( $("<div/>").text( pad.candidates.length + " md5's evaluated"));
-      console.log( pad.keys );
-    });
+  var gfx = new Graphics("canvas1");
+
+  function seeIfBallFallsThrough( startTime) {
+    dropBallAt( startTime, data, gfx )
+      .then( sculpture => {
+        gfx.drawSculpture();
+        $("#answer1").text( startTime );
+      })
+      .catch( sculpture => {
+        seeIfBallFallsThrough( startTime+1 );
+      });
+  }
+  seeIfBallFallsThrough( 0 );
+
 }
 
 

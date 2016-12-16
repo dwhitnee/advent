@@ -56,14 +56,17 @@
 </div>
 
 <div>
-  Ball will drop all the way through at time <span id="answer1"></span>
+  Ball will drop all the way through at time <span id="answer1">...</span>
 </div>
 <progress value="0" max="100"></progress>
-<br>
+<div>
+  Time = <span id="time"></span>
+  (Dropping at = <span id="dropTime"></span>)
+</div>
 
-<canvas id="canvas1" width="120" height="500"></canvas>
+<canvas id="canvas1" width="120" height="700"></canvas>
 
-<div style="float:right">
+<div style="float:right" class="center">
   <button class="btn btn-primary">Start</button>
   <br>
   <textarea rows=3 cols=40 placeholder="override input goes here"></textarea>
