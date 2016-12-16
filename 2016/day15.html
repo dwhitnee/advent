@@ -18,8 +18,10 @@
   }
   canvas {
     margin: 1em;
-    float: left;
-      border: 1px solid blue;
+    left: 30em;
+    top: 3em;
+    position: absolute;
+    border: 1px solid blue;
   }
   .center {
     display: flex;
@@ -55,6 +57,13 @@
   </h2>
 </div>
 
+<div style="display: inline-block;">
+  <button class="btn btn-primary">Start</button>
+  <br>
+  <textarea rows=3 cols=40 placeholder="override input goes here"></textarea>
+  <br>
+</div>
+
 <div>
   Ball will drop all the way through at time <span id="answer1">...</span>
 </div>
@@ -65,13 +74,6 @@
 </div>
 
 <canvas id="canvas1" width="120" height="700"></canvas>
-
-<div style="float:right" class="center">
-  <button class="btn btn-primary">Start</button>
-  <br>
-  <textarea rows=3 cols=40 placeholder="override input goes here"></textarea>
-  <br>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.6.0/js/md5.min.js"></script>

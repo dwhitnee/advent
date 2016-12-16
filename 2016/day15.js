@@ -256,8 +256,6 @@ function run( data ) {
 }
 
 
-
-
 function findRightTimeToDropBall( data ) {
 
   for (var startTime=0; ; startTime++) {
@@ -266,6 +264,10 @@ function findRightTimeToDropBall( data ) {
     }
 
     var sculpture = new Sculpture( data );
+
+    //  "Disc #N has 11 positions; at time=0, it is at position 0.",
+    // sculpture.addDisc( new Disc( data.length, 11, 0 ));
+
     sculpture.dropBallAtTime( startTime );
 
     while (sculpture.ballDropping && !sculpture.ballFellThrough()) {
