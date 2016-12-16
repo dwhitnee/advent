@@ -24,7 +24,7 @@ class Disc {
   }
 
   get angle() {
-    return 360 * this.pos / this.positions;
+    return 2*Math.PI * this.pos/this.positions;
   }
 }
 
@@ -42,11 +42,11 @@ class Sculpture {
     this.discs = {};
   }
 
-  releaseBall() {
+  dropBall() {
     this.ballDropping = true;
   }
 
-  releaseBallAtTime( time ) {
+  dropBallAtTime( time ) {
     for (var i=0; i < time; i++) {
       this.tick();
     }
@@ -55,8 +55,8 @@ class Sculpture {
 
   // move time forward
   tick() {
-    for (var i=0; i < this.discs.length; i++) {
-      this.discs[i].tick();
+    for (var id in  this.discs) {
+      this.discs[id].tick();
     }
     if (this.ballDropping) {
       this.checkBall();
@@ -89,10 +89,13 @@ class Sculpture {
   }
 
   // "Disc #1 has 5 positions; at time=0, it is at position 4."
-  parseDisc( str ) {
-    var match = str.match(/Disc #(\d+) has (\d+) positions; at time=(\d+), it is at position (\d+)./);
-    // cheat and assume always at time 0
-    this.addDisc( new Disc( match[1], match[2], match[4] ));
+  parseDiscs( data ) {
+    for (var i=0; i < data.length; i++) {
+      var match = data[i].match(
+          /Disc #(\d+) has (\d+) positions; at time=(\d+), it is at position (\d+)./);
+      // cheat and assume always at time 0
+      this.addDisc( new Disc( match[1], match[2], match[4] ));
+    }
   }
 }
 
@@ -106,20 +109,43 @@ class Graphics {
    * @param canvasId   HTML canvas element id
    */
   constructor( canvasId, sculpture ) {
-    var c = document.getElementById( canvasId );
+    this.canvas = document.getElementById( canvasId );
     this.sculpture = sculpture;
 
-    this.gfx = c.getContext("2d");
-    this.gfx.translate( 50, 50 );
-    this.gfx.scale( 3, 3 );
+    this.gfx = this.canvas.getContext("2d");
   }
 
   drawSculpture() {
-    var discIds = Object.keys( this.sculpture.discs );
-    for (var i=0; i < discIds.length; i++) {
-      var disc = this.discs[discIds[i]];
+    this.gfx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    for (var discId in  this.sculpture.discs) {
+      var disc = this.sculpture.discs[discId];
 
+      this.gfx.save();
+
+      this.gfx.strokeStyle = "#ccc";
+      this.gfx.lineWidth = 2;
+
+      this.gfx.scale( 3, 3 );
+      this.gfx.translate( 20, 10 + 30*discId );
+      this.gfx.rotate( disc.angle - Math.PI/2 );
+
+      this.gfx.beginPath();
+      // x, y, radius, angles
+      var gap = .2;
+      this.gfx.arc( 0, 0, 10, gap, Math.PI-gap );
+      this.gfx.closePath();
+      this.gfx.stroke();
+
+      this.gfx.beginPath();
+      this.gfx.arc( 0,0, 10, Math.PI+gap, 2*Math.PI-gap );
+      this.gfx.closePath();
+      this.gfx.stroke();
+
+      this.gfx.rotate( Math.PI/2 );
+      this.gfx.fillText( discId, 3, 3 );
+
+      this.gfx.restore();
     }
   }
 
@@ -133,6 +159,8 @@ class Graphics {
 function runProgram( data ) {
 
   var sculpture = new Sculpture( data );
+  sculpture.parseDiscs( data );
+
   var gfx = new Graphics("canvas1", sculpture );
 
   // try starting sculpture at various times and see if ball falls through.
@@ -158,10 +186,10 @@ function runProgram( data ) {
         {
           progressFn: (pct) => {
             gfx.progress( pct );
-          }
+          },
           // chunkSize: 10,
-          // totalWorkUnits: 64,
-          // totalTime: 5000
+          totalWorkUnits: 50,
+          totalTime: 10000
         });
       worker.start();
     });
@@ -171,7 +199,10 @@ function runProgram( data ) {
 function run( salt ) {
   var testdata = [
     "Disc #1 has 5 positions; at time=0, it is at position 4.",
-    "Disc #2 has 2 positions; at time=0, it is at position 1."];
+    "Disc #2 has 2 positions; at time=0, it is at position 1.",
+    "Disc #3 has 5 positions; at time=0, it is at position 0.",
+    "Disc #4 has 15 positions; at time=0, it is at position 2."
+  ];
 
   runProgram( testdata ).then(
     pad => {
@@ -188,7 +219,7 @@ function waitForButton() {
     if (input) {
       run( input.split( /\n/ ));
     } else {
-      getData("input/day14").then( data => run( data ));
+      getData("input/day15").then( data => run( data ));
     }
   });
 }

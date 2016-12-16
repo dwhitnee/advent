@@ -18,9 +18,17 @@
   }
   canvas {
     margin: 1em;
-    display: none;
-    /*  border: 1px solid blue; */
+    float: left;
+      border: 1px solid blue;
   }
+  .center {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
   .part2 {
     padding-top: 1em;
     display: none;
@@ -51,18 +59,16 @@
   Ball will drop all the way through at time <span id="answer1"></span>
 </div>
 <progress value="0" max="100"></progress>
-
-<canvas id="canvas1"></canvas>
-
-<div id="output"></div>
-
-<hr style="margin-top: 5em">
-
-
-<button class="btn btn-primary">Start</button>
 <br>
-<textarea rows=3 cols=40 placeholder="override input goes here"></textarea>
-<br>
+
+<canvas id="canvas1" width="120" height="500"></canvas>
+
+<div style="float:right">
+  <button class="btn btn-primary">Start</button>
+  <br>
+  <textarea rows=3 cols=40 placeholder="override input goes here"></textarea>
+  <br>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.6.0/js/md5.min.js"></script>
