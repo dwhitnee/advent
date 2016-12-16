@@ -7,9 +7,9 @@ class Disc {
   /**
    */
   constructor( id, positions, initialPosition ) {
-    this.id = id;
-    this.pos = initialPosition;
-    this.positions = positions;
+    this.id = id|0;
+    this.pos = initialPosition|0;
+    this.positions = positions|0;
   }
 
   // move one second
@@ -18,8 +18,14 @@ class Disc {
     this.pos %= this.positions;
   }
 
+  // move one second
+  tickN( times ) {
+    this.pos += times;
+    this.pos %= this.positions;
+  }
+
   // ball will fall through slot at position #0
-  isSlotLinedUp() {
+ isSlotLinedUp() {
     return !this.pos;
   }
 
@@ -49,10 +55,18 @@ class Sculpture {
   }
 
   dropBallAtTime( time ) {
-    for (var i=0; i < time; i++) {
-      this.tick();
-    }
+    this.tickN( time );
     this.dropBall();
+  }
+
+  tickN( times ) {
+    this.time += times;
+    for (var id in  this.discs) {
+      this.discs[id].tickN( times );
+    }
+    if (this.ballDropping) {
+      this.checkBall();
+    }
   }
 
   // move time forward, rotate discs, move ball down
@@ -177,12 +191,12 @@ function dropBallAt( dropTime, data, gfx ) {
 
   var sculpture = new Sculpture( data );
   gfx.sculpture = sculpture;
+  sculpture.dropBallAtTime( dropTime );
 
   // worker function
   function doWork( i ) {
     gfx.drawSculpture();
-
-    if (i >= dropTime) {
+    if (i => dropTime) {
       sculpture.dropBall();
       sculpture.tick();
       return sculpture.ballDropping && !sculpture.ballFellThrough();
@@ -205,23 +219,25 @@ function dropBallAt( dropTime, data, gfx ) {
         },
         {
           progressFn: (pct) => {
+            gfx.drawSculpture();
             gfx.progress( pct );
           },
-          totalWorkUnits: dropTime+1,
-          totalTime: 1000
+          // chunkSize: 1000
+          totalWorkUnits: 10,
+          totalTime: 10000
         });
-      worker.start();
+
+      gfx.drawSculpture();
+      setTimeout( function() {
+        worker.start();
+      }, 1000 );
+
     });
 }
 
 
 function run( data ) {
-  var testdata = [
-    "Disc #1 has 5 positions; at time=0, it is at position 4.",
-    "Disc #2 has 2 positions; at time=0, it is at position 1.",
-    // "Disc #3 has 5 positions; at time=0, it is at position 0.",
-    // "Disc #4 has 15 positions; at time=0, it is at position 2."
-  ];
+  var dropTime = findRightTimeToDropBall( data );
 
   var gfx = new Graphics("canvas1");
 
@@ -235,12 +251,43 @@ function run( data ) {
         seeIfBallFallsThrough( startTime+1 );
       });
   }
-  seeIfBallFallsThrough( 0 );
 
+  seeIfBallFallsThrough( dropTime );
+}
+
+
+
+
+function findRightTimeToDropBall( data ) {
+
+  for (var startTime=0; ; startTime++) {
+    if (!(startTime % 10000)) {
+      console.log( startTime );
+    }
+
+    var sculpture = new Sculpture( data );
+    sculpture.dropBallAtTime( startTime );
+
+    while (sculpture.ballDropping && !sculpture.ballFellThrough()) {
+      sculpture.tick();
+    }
+    if (sculpture.ballFellThrough()) {
+      console.log("It worked! Start = " + startTime );
+      return startTime;
+    }
+  }
 }
 
 
 function waitForButton() {
+  var testdata = [
+    "Disc #1 has 5 positions; at time=0, it is at position 4.",
+    "Disc #2 has 2 positions; at time=0, it is at position 1.",
+    // "Disc #3 has 5 positions; at time=0, it is at position 0.",
+    // "Disc #4 has 15 positions; at time=0, it is at position 2."
+  ];
+
+
   $("button").on("click", function() {
     var input = $("textarea").val();
     if (input) {
