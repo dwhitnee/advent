@@ -1,0 +1,73 @@
+<!doctype html>
+<html> <head>
+<title>Day 15</title>
+<link
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous" >
+
+<style>
+  body { padding: 1em;  }
+  textarea { margin: 1em; vertical-align: middle; }
+  .registers ul {
+    margin: 0;
+  }
+  .output {
+    margin: 1em;
+  }
+  canvas {
+    margin: 1em;
+    display: none;
+    /*  border: 1px solid blue; */
+  }
+  .part2 {
+    padding-top: 1em;
+    display: none;
+  }
+  .data {
+    font-size: 12pt;
+  }
+  #answer1 {
+    color: green;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <h2>
+  <a href="http://adventofcode.com/2016/day/15">Day 15</a>
+  <span class="data">
+    (<a href="http://adventofcode.com/2016/day/15/input">Input Data</a>)
+  </span>
+  <span class="data">
+    (<a href="https://github.com/dwhitnee/advent/tree/master/2016/">code</a>)
+  </span>
+  </h2>
+</div>
+
+<div>
+  Ball will drop all the way through at time <span id="answer1"></span>
+</div>
+<progress value="0" max="100"></progress>
+
+<canvas id="canvas1"></canvas>
+
+<div id="output"></div>
+
+<hr style="margin-top: 5em">
+
+
+<button class="btn btn-primary">Start</button>
+<br>
+<textarea rows=3 cols=40 placeholder="override input goes here"></textarea>
+<br>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.6.0/js/md5.min.js"></script>
+<script src="lib/util.js"></script>
+<script src="lib/workerThread.js"></script>
+<script src="day15.js"></script>
+</body>
+</html>
