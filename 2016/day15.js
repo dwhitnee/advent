@@ -22,6 +22,10 @@ class Disc {
   isSlotLinedUp() {
     return !this.pos;
   }
+
+  get angle() {
+    return 360 * this.pos / this.positions;
+  }
 }
 
 /**
@@ -101,9 +105,9 @@ class Graphics {
   /**
    * @param canvasId   HTML canvas element id
    */
-  constructor( canvasId, pad ) {
+  constructor( canvasId, sculpture ) {
     var c = document.getElementById( canvasId );
-    this.pad = pad;
+    this.sculpture = sculpture;
 
     this.gfx = c.getContext("2d");
     this.gfx.translate( 50, 50 );
@@ -111,7 +115,12 @@ class Graphics {
   }
 
   drawSculpture() {
+    var discIds = Object.keys( this.sculpture.discs );
+    for (var i=0; i < discIds.length; i++) {
+      var disc = this.discs[discIds[i]];
 
+
+    }
   }
 
   progress( pct ) {
