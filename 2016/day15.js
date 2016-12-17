@@ -18,14 +18,14 @@ class Disc {
     this.pos %= this.positions;
   }
 
-  // move one second
+  // move N seconds
   tickN( times ) {
     this.pos += times;
     this.pos %= this.positions;
   }
 
   // ball will fall through slot at position #0
- isSlotLinedUp() {
+  isSlotLinedUp() {
     return !this.pos;
   }
 
@@ -196,14 +196,8 @@ function dropBallAt( dropTime, data, gfx ) {
   // worker function
   function doWork( i ) {
     gfx.drawSculpture();
-    if (i => dropTime) {
-      sculpture.dropBall();
-      sculpture.tick();
-      return sculpture.ballDropping && !sculpture.ballFellThrough();
-    } else {
-      sculpture.tick();
-      return true;
-    }
+    sculpture.tick();
+    return sculpture.ballDropping && !sculpture.ballFellThrough();
   }
 
   return new Promise(
