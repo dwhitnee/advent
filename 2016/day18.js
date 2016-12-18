@@ -16,8 +16,12 @@ class TrapRoom {
       this.rows.push( prevRow );
       this.safeTiles += this.countSafeTiles( prevRow );
     }
-    for (i=0; i < this.rows.length; i++) {
+  }
+
+  print() {
+    for (var i=0; i < this.rows.length; i++) {
       console.log( this.rows[i] );
+      $("#room").append($("<p/>").text( this.rows[i] ));
     }
   }
 
@@ -91,45 +95,11 @@ class Graphics {
 }
 
 
-// @return a promise to do the work
-function runMaze( passcode ) {
-
-  var maze = new VaultMaze( passcode );
-  var gfx = new Graphics("canvas1", maze );
-
-  // FIXME this is recursive, so poo
-
-  // worker function
-  function doWork( i ) {
-    // cpu.executeNextLine();
-    // return !cpu.programDone();
-  }
-
-  return new Promise(
-    function( resolve, reject ) {
-      var worker = new WorkerThread(
-        doWork,
-        () =>  {
-          resolve( maze );
-        },
-        {
-          progressFn: (pct) => {
-            gfx.progress( pct );
-            gfx.drawMaze();
-          },
-          chunkSize: 10000
-          // totalWorkUnits: data.length,
-          // totalTime: 5000
-        });
-      worker.start();
-    });
-}
-
-
 function run( firstRow, numRows ) {
 
   var room = new TrapRoom( firstRow[0], 40 );
   $("#answer1").text( room.safeTiles );
+  room.print();
 
   room = new TrapRoom( firstRow[0], 400000 );
   $("#answer2").text( room.safeTiles );
