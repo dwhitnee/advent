@@ -1,5 +1,53 @@
 /*global $, WorkerThread, getData, md5 */
 
+//----------------------------------------
+class CircularLinkedList {
+  constructor() {
+    this.size = 0;
+  }
+
+  append( id ) {
+    var node = {
+      id: id,
+      presents: 1,
+      prev: this.head,
+      next: this.head
+    };
+
+    this.size++;
+
+    if (!this.size) {
+      this.head = node;
+      this.tail = node;
+      node.prev = this.head;
+      node.next = this.head;
+    }
+  }
+
+  delete( node ) {
+    if (this.head === node) {
+      this.head = node.next;
+    }
+    node.prev = node.next;
+    node.next.prev = node.prev;
+
+    this.size--;
+  }
+
+  find( id ) {
+    var node = this.head;
+    do {
+      if (node.id === id) {
+        return node;
+      }
+      node = node.next;
+    } while (node !== node.head);
+
+    return undefined;
+  }
+}
+
+
 /**
  * White Elephant party where each elf steals the next elf's presents.
  */
@@ -7,15 +55,16 @@ class WhiteElephantParty {
   /**
    */
   constructor( numElves ) {
-    this.elves = new Array( numElves );
-    this.elves.fill( 1, 0, numElves);
-    this.partiers = numElves;
+    this.elves = new CircularLinkedList();
+    for (var i=0; i < numElves; i++) {
+      this.elves.append( i );
+    }
   }
 
   // party until only one elf has presents
   start() {
     var startTime = Date.now();
-    var partyElf = 0;
+    var partyElf = this.elves.head;
     var exchangeOccuredInThisLoop = false;
 
     while (true) {
@@ -23,18 +72,17 @@ class WhiteElephantParty {
       var nextElf = this.oppositePartyingElf( partyElf );
 
       // steal next elf's presents
-      this.elves[partyElf] += this.elves[nextElf];
-      this.elves[nextElf] = 0;
-      this.partiers--;
+      partyElf.presents += nextElf.presents;
+      this.elves.delete( nextElf );
 
-      if (this.partiers === 1) {
-        this.winner = partyElf;
+      if (this.elves.size === 1) {
+        this.winner = partyElf.id;
         break;
       }
 
       partyElf = this.nextPartyingElf( partyElf );
 
-      if (!(this.partiers % 10000)) {
+      if (!(this.elves.size % 10000)) {
         console.log( this.partiers + " left. Time = " + (Date.now() - startTime));
         startTime = Date.now();
       }

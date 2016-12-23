@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * A worker fakes a thread that calls doWork until done, but yields (setTimeout)
  * after each unit is complete (and calls doProgress)
@@ -65,3 +67,7 @@ class WorkerThread {
     }
   };
 }
+
+// if (typeof module != "undefined") {
+//   module.exports = WorkerThread;
+// }
